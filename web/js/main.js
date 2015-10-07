@@ -50,7 +50,7 @@ WEB_SOCKET_SWF_LOCATION = '/js/flash_socket/WebSocketMain.swf';
         MIDI.loadPlugin({
           soundfontUrl : "./soundfont/",
           instrument : "acoustic_grand_piano",
-          callback : function() {
+          onsuccess : function() {              
             MIDI.setVolume(0, 127);
 
             Game.piano = {
@@ -117,6 +117,8 @@ WEB_SOCKET_SWF_LOCATION = '/js/flash_socket/WebSocketMain.swf';
           }
         });
       } else {
+        console.debug('No MIDI found.');
+
         Game.piano = {
           'play' : function(sound, callback) {
             return { 'delay' : 1000 };
