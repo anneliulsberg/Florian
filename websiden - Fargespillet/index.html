@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="nb-no">	
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">		
+		<title>Bien Florian</title>
+		<link rel="Shortcut Icon" href="img/favicon.ico" type="image/ico">
+		<link rel="stylesheet" href="css/style.css">
+		<link href="http://fonts.googleapis.com/css?family=Sigmar+One" rel="stylesheet" type="text/css">
+    	<script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
+		<script type="text/javascript" src="js/flash_socket/swfobject.js"></script>
+		<script type="text/javascript" src="js/flash_socket/web_socket.js"></script>
+	    <script src="js/midi/AudioDetect.js" type="text/javascript"></script>
+	    <script src="js/midi/LoadPlugin.js" type="text/javascript"></script>
+	    <script src="js/midi/Plugin.js" type="text/javascript"></script>
+	    <script src="js/midi/Player.js" type="text/javascript"></script>
+	    <script src="js/window/DOMLoader.XMLHttp.js" type="text/javascript"></script>
+	    <script src="js/window/DOMLoader.script.js" type="text/javascript"></script>
+	    <script src="js/extras/base64.js" type="text/javascript"></script>
+	    <script src="js/extras/base64binary.js" type="text/javascript"></script>
+	  	<script src="js/main.js"></script>
+	</head>
+	
+	<body>
+				
+		<div id="page">
+		
+			<header>Bien Florian</header>
+			
+			<div id="start">
+				<h1>Start å samle inn nektar</h1>
+				<a href="#"><img src="img/start-game.png" alt="Start the game"></a>
+				<p>Hjelp bien Florian å samle inn nektar fra blomstene ved å gjenta fargene i riktig rekkefølge!</p>
+			</div>
+			
+			<div id="game">
+					<table id="game-board">
+						<tr>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+						</tr>
+						
+						<tr>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+						</tr>
+						
+						<tr>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+						</tr>
+						
+						<tr>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+						</tr>
+						
+						<tr>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+						</tr>
+						
+						<tr>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+						</tr>
+						
+						<tr>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+						</tr>
+						
+						<tr>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+						</tr>
+						
+					</table>
+							
+				<div id="touch">
+					<a id="touch-red" href="#"><img src="img/touch-red-button.png" alt="Red button"></a>
+					<a id="touch-green" href="#"><img src="img/touch-green-button.png" alt="Green button"></a>
+					<a id="touch-blue" href="#"><img src="img/touch-blue-button.png" alt="Blue button"></a>
+				</div>
+				
+				<div id="game-info">
+					<div id="points">Nektar: <span></span></div>
+					<div id="level">Nivå: <span></span></div>
+<!--					<div id="highscore">Toppscore: <span></span></div>-->
+				</div>
+				
+			</div>
+			
+		</div>
+		
+	</body>
+	
+</html>
