@@ -31,7 +31,7 @@ WEB_SOCKET_SWF_LOCATION = '/js/flash_socket/WebSocketMain.swf';
   'colors' : ['r', 'g', 'b'],
   'piano' : {},
 
-  
+
   /*
    * INITIALIZE
    *
@@ -40,25 +40,25 @@ WEB_SOCKET_SWF_LOCATION = '/js/flash_socket/WebSocketMain.swf';
    * @connect 'true' to connect the game to the WebSocket server,
    *          'false' if already connected.
    *
-   * @return void   
+   * @return void
    */
   'initialize' : function(connect, keepBoard) {
     if (connect) {
       Game.connect();
-      
+
       if (window.MIDI) {
         MIDI.loadPlugin({
           soundfontUrl : "./soundfont/",
           instrument : "acoustic_grand_piano",
           callback : function() {
             MIDI.setVolume(0, 127);
-            
+
             Game.piano = {
               'play' : function(sound, callback) {
                 var melody = [];
                 var velocity = 127;
                 var delay = 0;
-                
+
                 switch (sound) {
                   case 'start':
                     melody = [
@@ -66,51 +66,51 @@ WEB_SOCKET_SWF_LOCATION = '/js/flash_socket/WebSocketMain.swf';
                       [62, 1], [65, 0.2], [69, 0.2], [72, 0.2]
                     ];
                     break;
-  
+
                   case 'advance':
                     /*for (var i = Game.board.length - 1; i > 0; i--) {
                       var row = Game.board[i];
-                      
-                      for (var j = 0; j < 
+
+                      for (var j = 0; j <
                     }*/
                     break;
-                    
+
                   case 'r':
                     melody = [[60, 0]];
                     break;
-                    
+
                   case 'g':
                     melody = [[64, 0]];
                     break;
-                    
+
                   case 'b':
                     melody = [[67, 0]];
                     break;
                 }
-                
-                for (var i = 0; i < melody.length; i++) {            
+
+                for (var i = 0; i < melody.length; i++) {
                   var note = melody[i][0];
                   delay += melody[i][1];
                   var noteOff = delay + 0.2;
-                  
+
                   if (i < melody.length - 1) {
                     noteOff = delay + melody[i + 1][1];
                   } else if (i == melody.length - 1) {
                     noteOff = delay + 1;
                   }
-                  
+
                   // console.log('Playing', [note, velocity, delay, noteOff]);
-                  
+
                   MIDI.noteOn(0, note, velocity, delay);
                   MIDI.noteOff(0, note, noteOff);
                 }
-                
+
                 var timeout = (delay + 1) * 1000;
-                
+
                 if (callback) {
                   setTimeout(callback, timeout);
                 }
-                
+
                 return { 'delay' : timeout };
               }
             };
@@ -124,20 +124,20 @@ WEB_SOCKET_SWF_LOCATION = '/js/flash_socket/WebSocketMain.swf';
         };
       }
     }
-    
+
     // Fetch the level and points from the URL.
     var m = window.location.href.match(/#l?(\d*)?p?(\d*)?/)
-    
+
     // console.log(m);
-    
+
     if (m) {
       Game.level = parseInt(m[1], 10);
       Game.points = parseInt(m[2], 10);
-      
+
       if (isNaN(Game.level)) {
         Game.level = 1;
       }
-      
+
       if (isNaN(Game.points)) {
         Game.points = 0;
       }
@@ -145,24 +145,24 @@ WEB_SOCKET_SWF_LOCATION = '/js/flash_socket/WebSocketMain.swf';
       Game.level = 1;
       Game.points = 0;
     }
-    
+
     if (Game.level > 10) {
       Game.level = 10;
     }
-    
+
     if (!keepBoard) {
       // Reset the game board.
       Game.board = [];
 
       for (var i = 0; i < 8; i++) {
         var row = [];
-        
+
         for (var j = 0; j < Game.level; j++) {
           var colorIndex = Math.floor(Math.random() * Game.colors.length);
           var color = Game.colors[colorIndex];
           row.push(color);
         }
-  
+
         Game.board.push(row);
       }
     }
@@ -171,82 +171,82 @@ WEB_SOCKET_SWF_LOCATION = '/js/flash_socket/WebSocketMain.swf';
     $('#level span').text(Game.level);
     $('#points span').text(Game.points);
   },
-  
-  
+
+
   /*
    * START
    *
    * Starts the game
    *
-   * @return void   
+   * @return void
    */
   'start' : function() {
     var d = Game.piano.play('start');
-    
+
     $('#start').animate({'opacity' : 0}, d.delay, function() {
       $(this).hide();
-      Game.paint();    
+      Game.paint();
     });
   },
-  
+
 
   /*
    * CONNECT
    *
    * Connects to the WebSocket server.
    *
-   * @return void   
+   * @return void
    */
   'connect' : function() {
     // Connect to the socket server.
     var socket = new WebSocket('ws://localhost:8888/websocket');
-    var prevButtons = null;    
-    
+    var prevButtons = null;
+
     // Handle socket events.
     socket.onmessage = function(e) {
-    	var buttons = e.data;
-    	
-    	// Since the button presses from Arduino will come as an unstoppable,
-    	// eternal stream of messages, we need to detect whether the button
-    	// is being held down (in which case the message sent will be the same
-    	// as the previous), and if it is, ignore it.
-    	if (buttons == prevButtons) {
-    	  return;
-    	}
-    	
-    	prevButtons = buttons;
-    	
-    	// 'buttons' will contain three numbers. The first represents red,
-    	// the second green, the third blue. If the number is set to '1',
-    	// it means the corresponding colored button was pressed.
-    	var red = parseInt(buttons.substr(0, 1), 10);
-    	var green = parseInt(buttons.substr(1, 1), 10);
-    	var blue = parseInt(buttons.substr(2, 1), 10);
-    	
-    	if (red == 1) {
-    		Game.press('r');
-    	}
-    	
-    	if (green == 1) {
-    		Game.press('g');
-    	}
-    	
-    	if (blue == 1) {
-    		Game.press('b');
-    	}
+        var buttons = e.data;
+
+        // Since the button presses from Arduino will come as an unstoppable,
+        // eternal stream of messages, we need to detect whether the button
+        // is being held down (in which case the message sent will be the same
+        // as the previous), and if it is, ignore it.
+        if (buttons == prevButtons) {
+          return;
+        }
+
+        prevButtons = buttons;
+
+        // 'buttons' will contain three numbers. The first represents red,
+        // the second green, the third blue. If the number is set to '1',
+        // it means the corresponding colored button was pressed.
+        var red = parseInt(buttons.substr(0, 1), 10);
+        var green = parseInt(buttons.substr(1, 1), 10);
+        var blue = parseInt(buttons.substr(2, 1), 10);
+
+        if (red == 1) {
+            Game.press('r');
+        }
+
+        if (green == 1) {
+            Game.press('g');
+        }
+
+        if (blue == 1) {
+            Game.press('b');
+        }
     }
-    
+
     socket.onopen = function(e) {
-    	socket.send('Ping!');
+        socket.send('Ping!');
     }
   },
-  
+
 
   /*
    * PAINT
    *
    * Paints the game's current row in the colors given by the game's board.
-   * 
+   *
    * @color The color ('r', 'g' or 'b') to paint the current step with (based
    *        on user input). [Optional]
    * @return void
@@ -255,12 +255,12 @@ WEB_SOCKET_SWF_LOCATION = '/js/flash_socket/WebSocketMain.swf';
     if (color) {
       // Repaint the row based on user input.
       // console.log('Coloring', Game.prevRow, Game.prevStep);
-      
+
       var $td = Game.instance.find('tr').eq(Game.prevRow)
                              .find('td').eq(Game.prevStep);
-      
+
       Game.setColor($td, false);
-                   
+
       var $nextRow = Game.instance.find('tr').eq(Game.nextRow);
 
       if (Game.prevRow != Game.nextRow) {
@@ -279,7 +279,7 @@ WEB_SOCKET_SWF_LOCATION = '/js/flash_socket/WebSocketMain.swf';
       Game.instance.find('tr td').each(Game.paintRow);
     }
   },
-  
+
 
   /*
    * PAINTROW
@@ -290,30 +290,30 @@ WEB_SOCKET_SWF_LOCATION = '/js/flash_socket/WebSocketMain.swf';
    */
   'paintRow' : function() {
     Game.interactive = false;
-    
-  	var $td = $(this);
+
+      var $td = $(this);
     var $row = $td.closest('tr');
     var rowIndex = $row.index();
-  	var columnIndex = $td.index();
-  	
-  	// Are we on a column that should be displayed on this level?
-  	if (columnIndex < Game.level) {
-  		// console.log('Clearing', rowIndex, columnIndex);
-  		
-  		$td.attr('class', 'x');
-  		
-  		// Are we on the row that should be played next?
+      var columnIndex = $td.index();
+
+      // Are we on a column that should be displayed on this level?
+      if (columnIndex < Game.level) {
+          // console.log('Clearing', rowIndex, columnIndex);
+
+          $td.attr('class', 'x');
+
+          // Are we on the row that should be played next?
       if (rowIndex == Game.nextRow) {
         var timeout = 1000 * (columnIndex + 1);
         setTimeout(Game.setColor, timeout, $td, true);
-        
+
         // Are we on the column that should be played next?
         if (columnIndex == Game.nextStep) {
           timeout = 1000 * (Game.level + 1);
           setTimeout(Game.setNext, timeout, $td);
         }
       }
-  	}
+      }
   },
 
 
@@ -322,10 +322,10 @@ WEB_SOCKET_SWF_LOCATION = '/js/flash_socket/WebSocketMain.swf';
    *
    * Returns the color of the provided $td. If not provided, returns the
    * color of the game's current step.
-   * 
+   *
    * @$td The table data column to get the color of.
    * @return The color of the provided $td or the game's current step.
-   */  
+   */
   'getColor' : function($td) {
     var rowIndex = 0;
     var columnIndex = 0;
@@ -336,40 +336,40 @@ WEB_SOCKET_SWF_LOCATION = '/js/flash_socket/WebSocketMain.swf';
       columnIndex = $td.index();
     } else {
       rowIndex = Game.nextRow;
-      columnIndex = Game.nextStep;      
+      columnIndex = Game.nextStep;
     }
-    
+
     return Game.board[rowIndex][columnIndex];
   },
-  
+
 
   /*
    * SETCOLOR
    *
    * Sets color to the provided $td based on the value returned from 'Game.getColor'.
-   * 
+   *
    * @$td The table data column to add the color to.
    * @return void
    */
   'setColor' : function($td, remove) {
     var color = Game.getColor($td);
     $td.attr('class', color);
-    
+
     Game.piano.play(color);
-    
+
     // Special handling of level 1. No need to remove the color
     // since it will be replaced by the next arrow anyway.
     if (Game.level > 1 && remove) {
       setTimeout(Game.removeColor, 1000, $td);
     }
   },
-  
+
 
   /*
    * REMOVECOLOR
    *
    * Removes the color from the provided $td.
-   * 
+   *
    * @$td The table data column to remove the color from.
    * @return void
    */
@@ -377,13 +377,13 @@ WEB_SOCKET_SWF_LOCATION = '/js/flash_socket/WebSocketMain.swf';
     var color = Game.getColor($td);
     $td.attr('class', 'x');
   },
-  
+
 
   /*
    * SETNEXT
    *
    * Sets the next symbol to the provided $td.
-   * 
+   *
    * @$td The table data column to set the arrow on.
    * @return void
    */
@@ -391,7 +391,7 @@ WEB_SOCKET_SWF_LOCATION = '/js/flash_socket/WebSocketMain.swf';
     $td.attr('class', 'n');
     Game.interactive = true;
   },
-  
+
 
   /*
    * PRESS
@@ -403,7 +403,7 @@ WEB_SOCKET_SWF_LOCATION = '/js/flash_socket/WebSocketMain.swf';
    */
   'press' : function(color) {
     var expectedColor = Game.getColor();
-    
+
     if (color == expectedColor) {
       // Increase points
       Game.points += Game.level;
@@ -413,7 +413,7 @@ WEB_SOCKET_SWF_LOCATION = '/js/flash_socket/WebSocketMain.swf';
       Game.prevStep = Game.nextStep;
       Game.prevRow = Game.nextRow;
       Game.nextStep++;
-      
+
       // If the next step is greater than the level of the game
       // (meaning we're on the last column/step of the game board),
       // advance one row (starting on 7, moving down to 0) instead.
@@ -435,40 +435,40 @@ WEB_SOCKET_SWF_LOCATION = '/js/flash_socket/WebSocketMain.swf';
       Game.reset();
       Game.initialize(false, true);
     }
-    
+
     Game.paint(color);
   },
-  
-  
+
+
   /*
    * ADVANCE
    *
    * Advances the game up one level.
-   * 
+   *
    * @return void
    */
   'advance' : function() {
     var timeout = 0;
-    
+
     Game.instance.find('td.r, td.g, td.b').attr('class', 'x');
-    
+
     for (var i = Game.board.length - 1; i >= 0; i--) {
       var row = Game.board[i];
       var $tr = Game.instance.find('tr').eq(i);
-      
+
       for (var j = 0; j < row.length; j++) {
         var $td = $tr.find('td').eq(j);
         setTimeout(Game.setColor, timeout++ * 250, $td, false);
       }
     }
-    
+
     setTimeout(function() {
       Game.reset();
-      
+
       if (!Game.failed) {
         Game.points += Game.level * 10;
       }
-      
+
       var level = ++Game.level;
       window.location.hash = '#l' + level + 'p' + Game.points;
       Game.initialize(false, false);
@@ -483,12 +483,12 @@ WEB_SOCKET_SWF_LOCATION = '/js/flash_socket/WebSocketMain.swf';
    * RESET
    *
    * Resets the game to the initial state.
-   * 
+   *
    * @return void
-   */  
+   */
   'reset' : function() {
     Game.nextStep = 0;
-    Game.prevStep = 0;    
+    Game.prevStep = 0;
     Game.nextRow = 7;
     Game.prevRow = 0;
   },
@@ -500,49 +500,49 @@ WEB_SOCKET_SWF_LOCATION = '/js/flash_socket/WebSocketMain.swf';
  */
 jQuery(function($) {
   Game.initialize(true, false);
-	
-	$('#start a').on('click tap', function() {
-	  Game.start();
-	  return false;
-	});
-	
-	$('#touch-red').on('click tap', function() {
-		Game.press('r');
-		return false;
-	});
-	
-	$('#touch-green').on('click tap', function() {
-		Game.press('g');
-		return false;
-	});
-	
-	$('#touch-blue').on('click tap', function() {
-		Game.press('b');
-		return false;
-	});
-	
-	// The user should be able to press the 'r', 'g' and 'b' keys on the keyboard
-	$(document).on('keypress', function(e)	{
-	  if (!Game.interactive) {
-	    // Game in non-interactive mode. Please wait!
-	    return;
-	  }
-	  
-	  switch (e.which) {
-	    case 82:  // R
-	    case 114: // r
-	      Game.press('r');
-	      break;
+
+    $('#start a').on('click tap', function() {
+      Game.start();
+      return false;
+    });
+
+    $('#touch-red').on('click tap', function() {
+        Game.press('r');
+        return false;
+    });
+
+    $('#touch-green').on('click tap', function() {
+        Game.press('g');
+        return false;
+    });
+
+    $('#touch-blue').on('click tap', function() {
+        Game.press('b');
+        return false;
+    });
+
+    // The user should be able to press the 'r', 'g' and 'b' keys on the keyboard
+    $(document).on('keypress', function(e)	{
+      if (!Game.interactive) {
+        // Game in non-interactive mode. Please wait!
+        return;
+      }
+
+      switch (e.which) {
+        case 82:  // R
+        case 114: // r
+          Game.press('r');
+          break;
 
       case 71:  // G
-	    case 103: // g
-	      Game.press('g');
-	      break;
+        case 103: // g
+          Game.press('g');
+          break;
 
       case 66: // B
-	    case 98: // b
-	      Game.press('b');
-	      break;
-	  }
-	});
+        case 98: // b
+          Game.press('b');
+          break;
+      }
+    });
 });
