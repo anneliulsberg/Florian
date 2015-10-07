@@ -199,7 +199,14 @@ WEB_SOCKET_SWF_LOCATION = '/js/flash_socket/WebSocketMain.swf';
    */
   'connect' : function() {
     // Connect to the socket server.
-    var socket = new WebSocket('ws://localhost:8888/websocket');
+    var socket;
+
+    try {
+        socket = new WebSocket('ws://localhost:8888/websocket');
+    } catch (e) {
+        return;
+    }
+
     var prevButtons = null;
 
     // Handle socket events.
